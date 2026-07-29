@@ -91,6 +91,21 @@ Always test first: `-profile test,<yours>`
 
 ---
 
+## Keep long HPC runs alive
+
+Runs can take hours. Losing your connection would normally kill the process.
+
+`screen`/`tmux` aren't just "multiplexers" — the key feature is **detach, walk away, reattach later** to the same still-running session.
+
+- **`screen`**: `screen -S ampliseq` → detach `Ctrl-a d` → reattach `screen -r ampliseq`
+- **`tmux`**: `tmux new -s ampliseq` → detach `Ctrl-b d` → reattach `tmux attach -t ampliseq`
+
+New to `screen`? Quick guide: opensource.com/article/21/4/gnu-screen-cheat-sheet
+
+Dardel: allocate first (`salloc`), then run inside the session on the compute node — not the login node.
+
+---
+
 ## Step 4 — When it breaks
 
 1. **Troubleshooting docs** — nf-co.re/docs/usage/troubleshooting
