@@ -50,6 +50,8 @@ A few rules straight from the schema (confirm against the Usage tab, these can c
 
 **Exercise:** build your own samplesheet for your actual files using this as a template, then check it against the Usage tab's rules before you launch anything.
 
+**Tip — save time if you don't need the QIIME2 plots:** the downstream QIIME2-based steps (barplots, diversity analysis, differential abundance testing) are often the slowest part of a run. If you're mainly after ASVs/taxonomy and don't need those plots, add `--skip_qiime` to skip them — worth deciding on up front, especially if compute time is tight during the clinic. Check the Parameters tab for the exact scope of what this skips versus related flags like `--skip_taxonomy`.
+
 ---
 
 ## 2. Everyone: get the basics of running any nf-core pipeline
@@ -62,6 +64,8 @@ Key ideas you should be able to explain afterward:
 - `--` (double dash) flags are pipeline parameters (`--input`, `--outdir`, `--FW_primer`, etc.); `-` (single dash) flags are Nextflow options (`-profile`, `-resume`, `-r`).
 - Always pin a pipeline version with `-r <version>` (e.g. `-r 2.15.0`) for reproducibility — check the current stable release on the ampliseq page.
 - `-resume` lets you re-launch after a crash without redoing finished steps.
+
+**Tip — installing your own Nextflow:** if a cluster's preloaded Nextflow module is older than what ampliseq requires (check the `nextflow_schema.json` / pipeline manifest for the minimum version), you don't need admin help — Nextflow installs into your own home directory with one command. See the official install docs: https://nf-co.re/docs/get_started/environment_setup/nextflow (or https://www.nextflow.io/docs/latest/install.html). This is often the fastest fix when `nextflow -v` on a cluster is behind what the pipeline expects. This is also exactly what you'll do if you're on **Track A (your own laptop)** — there's no cluster module to load, so a self-install is the normal, expected route rather than a workaround.
 
 A minimal shape (fill in the blanks yourself from what you read in Section 1):
 
@@ -107,9 +111,33 @@ Don't just copy this — go confirm each part against the docs pages above.
 
 - Docs: https://nf-co.re/configs/pdc_kth (also mirrored at https://github.com/nf-core/configs/blob/master/docs/pdc_kth.md)
 - Dardel doesn't preload Nextflow — check the docs page for how to fetch it if it isn't already available to you.
+
+**Loading modules on Dardel — this part is genuinely hard to piece together from the docs, so here it is explicitly.** A working module load line:
+
+```
+module load bioinfo-tools PDC apptainer java/17.0.4 nextflow
+```
+
+A few things worth knowing about why it looks like this:
+- `bioinfo-tools` and `PDC` are prerequisite module collections — load them first, or the others may not resolve.
+- Dardel offers **both** a `singularity` module and an `apptainer` module — load **apptainer**, not singularity. Apptainer is the actively maintained fork and what nf-core pipelines expect on this cluster; the two are not fully interchangeable in practice.
+- Nextflow needs a reasonably recent Java — `java/17.0.4` is known to work.
+- This gives a modern Nextflow (currently 26.04.0 via this module) — check `nextflow -v` after loading to confirm what you got, and compare against what ampliseq requires.
+
 - Use `-profile pdc_kth` and pass your Dardel/PDC allocation with `--project <your-allocation>` (e.g. `naiss-XXXX-XX-XXX`).
 - Note from the docs: Dardel's partitions lack long-runtime, high-memory nodes, so some heavier steps may need extra tuning — read the "known issues" notes on that page if a job seems stuck or killed.
 - `/tmp` on Dardel is RAM-backed, not disk — worth knowing before you write large temp files there.
+
+**Tip — use the scratch area for Nextflow's work directory:** Dardel has a global scratch space at `/cfs/klemming/scratch/<u>/<user>` (where `<u>` is the first letter of your username and `<user>` your full username). Point Nextflow's work directory there with `-w`:
+
+```
+nextflow run nf-core/ampliseq \
+  -profile pdc_kth --project <your-allocation> \
+  -w /cfs/klemming/scratch/<u>/<user>/work \
+  ...
+```
+
+This keeps the (often large, temporary) intermediate files out of your storage-project quota. The trade-off: **scratch is auto-cleaned — files untouched for about a month get deleted** — so it's fine for `work/` during a run, but not for anything you want to keep; make sure final results are written to durable storage with the `--outdir` parameter. See PDC's own storage docs for the current details: https://support.pdc.kth.se/doc/data_management/klemming/
 
 ### Track D (rare) — PacBio long reads + Seqera Platform
 
