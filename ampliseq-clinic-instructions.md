@@ -27,6 +27,29 @@ Then check the **Parameters** tab (https://nf-co.re/ampliseq/parameters) — thi
 
 **Exercise for participants:** before running the pipeline, write down the exact command you *think* you'll need, using only what you found on these two pages.
 
+### Example samplesheet, for reference
+
+The pipeline ships its own example samplesheet — worth opening once so you've seen a real one: https://github.com/nf-core/ampliseq/blob/master/docs/usage.md (see "Samplesheet input").
+
+Here's a minimal one for our clinic's case (paired-end Illumina, two sequencing runs), `samplesheet.tsv`:
+
+```
+sampleID	forwardReads	reverseReads	run
+sample1	./data/S1_R1_001.fastq.gz	./data/S1_R2_001.fastq.gz	run1
+sample2	./data/S2_R1_001.fastq.gz	./data/S2_R2_001.fastq.gz	run1
+sample3	./data/S3_R1_001.fastq.gz	./data/S3_R2_001.fastq.gz	run2
+sample4	./data/S4_R1_001.fastq.gz	./data/S4_R2_001.fastq.gz	run2
+```
+
+A few rules straight from the schema (confirm against the Usage tab, these can change between versions):
+- Columns are **tab-separated** (`.tsv`); comma-separated (`.csv`) and YAML (`.yml`/`.yaml`) are also accepted.
+- `sampleID` and `forwardReads` are **required**; `reverseReads` and `run` are optional (`reverseReads` is required for paired-end data, which is our case).
+- `sampleID` must be unique, start with a letter, and contain only letters, numbers, or underscores.
+- FastQ files must be gzip-compressed (`.fastq.gz` / `.fq.gz`).
+- Only fill in `run` if your samples came from more than one sequencing run — it lets the pipeline model each run's error profile separately.
+
+**Exercise:** build your own samplesheet for your actual files using this as a template, then check it against the Usage tab's rules before you launch anything.
+
 ---
 
 ## 2. Everyone: get the basics of running any nf-core pipeline
