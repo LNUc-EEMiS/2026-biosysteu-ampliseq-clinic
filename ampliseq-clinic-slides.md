@@ -63,7 +63,8 @@ Official example: github.com/nf-core/ampliseq → `docs/usage.md`
 https://nf-co.re/docs/usage/introduction
 
 - `-profile` → software + where jobs run
-- `--flag` → pipeline parameter, `-flag` → Nextflow option
+- `--flag` → pipeline parameter
+- `-flag` → Nextflow option
 - Pin a version: `-r <version>`
 - Resume a crashed run: `-resume`
 
