@@ -146,6 +146,8 @@ This avoids retyping long fastq filenames by hand, and sidesteps the typos that 
 
 ## 4. Choose your track: where will you run it?
 
+**One thing worth stating clearly up front, since it's commonly misunderstood: on both HPC tracks below, you never write or submit a Slurm job script yourself.** Nextflow does that for you. The `uppmax` and `pdc_kth` profiles tell Nextflow how to talk to Slurm on each cluster — so when you type `nextflow run ...` (from an interactive session as described in each track), Nextflow itself submits each pipeline step as its own Slurm job behind the scenes, waits for results, and moves on. You are not expected to know `sbatch`, write a batch script, or manage the queue by hand — that's precisely the point of the institutional profile.
+
 ### Track A — Your own laptop
 
 - Docs: https://nf-co.re/docs/usage/introduction and https://nf-co.re/docs/get_started/environment_setup/overview
