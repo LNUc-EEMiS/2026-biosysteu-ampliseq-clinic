@@ -202,7 +202,7 @@ Dardel:
 ```bash
 nextflow run nf-core/ampliseq \
   -profile pdc_kth \
-  --project NAISS2025-22-936 \
+  --project <DARDEL_PROJECT_ID> \
   --input Dataset/samplesheet_single.tsv \
   --pacbio \
   --FW_primer GTACACACCGCCCGTCG \
